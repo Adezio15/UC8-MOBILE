@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1d4ed8" />
+    <title>Gerenciador de Compromissos</title>
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-group">
+          <div class="brand-icon">C</div>
+          <div>
+            <p class="eyebrow">Minha agenda</p>
+            <h1>Compromissos</h1>
+          </div>
+        </div>
+        <button id="addTaskBtn" class="primary-btn" type="button">+ Novo</button>
+      </header>
+
+      <nav class="tab-nav" aria-label="Navegação principal">
+        <button class="tab-btn active" type="button" data-view="home">Resumo</button>
+        <button class="tab-btn" type="button" data-view="agenda">Agenda</button>
+      </nav>
+
+      <main class="app-main">
+        <section id="homeView" class="view active">
+          <div class="summary-panel">
+            <div class="section-heading">
+              <h2>Resumo do dia</h2>
+              <span id="todayLabel" class="muted-text"></span>
+            </div>
+            <div class="stats-grid">
+              <article class="stat-card blue">
+                <span class="stat-label">Hoje</span>
+                <strong id="todayCount">0</strong>
+                <small>compromissos</small>
+              </article>
+              <article class="stat-card gray">
+                <span class="stat-label">Pendentes</span>
+                <strong id="pendingCount">0</strong>
+                <small>em aberto</small>
+              </article>
+              <article class="stat-card teal">
+                <span class="stat-label">Concluídos</span>
+                <strong id="completedCount">0</strong>
+                <small>realizados</small>
+              </article>
+              <article class="stat-card orange">
+                <span class="stat-label">Alta</span>
+                <strong id="highPriorityCount">0</strong>
+                <small>prioridade</small>
+              </article>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="section-heading">
+              <h2>Lista de compromissos</h2>
+            </div>
+
+            <div class="toolbar">
+              <input id="searchInput" type="search" placeholder="Pesquisar por título" aria-label="Pesquisar compromissos" />
+            </div>
+
+            <div class="filter-bar" aria-label="Filtros">
+              <button class="filter-btn active" type="button" data-filter="all">Todos</button>
+              <button class="filter-btn" type="button" data-filter="pending">Pendentes</button>
+              <button class="filter-btn" type="button" data-filter="completed">Concluídos</button>
+            </div>
+
+            <div id="taskList" class="task-list" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section id="agendaView" class="view">
+          <div class="panel">
+            <div class="calendar-header">
+              <button id="prevMonthBtn" class="icon-btn" type="button" aria-label="Mês anterior">&#8249;</button>
+              <h2 id="calendarTitle">Mês atual</h2>
+              <button id="nextMonthBtn" class="icon-btn" type="button" aria-label="Próximo mês">&#8250;</button>
+            </div>
+
+            <div class="calendar-weekdays">
+              <span>Seg</span>
+              <span>Ter</span>
+              <span>Qua</span>
+              <span>Qui</span>
+              <span>Sex</span>
+              <span>Sab</span>
+              <span>Dom</span>
+            </div>
+
+            <div id="calendarGrid" class="calendar-grid"></div>
+          </div>
+
+          <div class="panel agenda-panel">
+            <div class="section-heading">
+              <h2 id="selectedDateTitle">Compromissos</h2>
+            </div>
+            <div id="agendaList" class="agenda-list"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="taskModal" class="modal hidden" aria-hidden="true">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2 id="modalTitle">Novo compromisso</h2>
+          <button id="closeModalBtn" class="icon-btn" type="button" aria-label="Fechar modal">×</button>
+        </div>
+
+        <form id="taskForm">
+          <input id="taskId" type="hidden" />
+
+          <div class="form-group">
+            <label for="taskTitle">Título</label>
+            <input id="taskTitle" name="taskTitle" type="text" maxlength="80" placeholder="Ex: Reunião de equipe" required />
+          </div>
+
+          <div class="form-group">
+            <label for="taskDescription">Descrição</label>
+            <textarea id="taskDescription" name="taskDescription" rows="3" maxlength="255" placeholder="Descreva o compromisso"></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="taskDate">Data</label>
+              <input id="taskDate" name="taskDate" type="date" required />
+            </div>
+            <div class="form-group">
+              <label for="taskTime">Hora</label>
+              <input id="taskTime" name="taskTime" type="time" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="taskLocation">Local</label>
+              <input id="taskLocation" name="taskLocation" type="text" maxlength="120" placeholder="Ex: Sala 3" required />
+            </div>
+            <div class="form-group">
+              <label for="taskPriority">Prioridade</label>
+              <select id="taskPriority" name="taskPriority">
+                <option value="alta">Alta</option>
+                <option value="media" selected>Média</option>
+                <option value="baixa">Baixa</option>
+              </select>
+            </div>
+          </div>
+
+          <label class="checkbox-row" for="taskCompleted">
+            <input id="taskCompleted" name="taskCompleted" type="checkbox" />
+            <span>Marcar como concluído</span>
+          </label>
+
+          <div class="modal-actions">
+            <button id="cancelTaskBtn" class="secondary-btn" type="button">Cancelar</button>
+            <button class="primary-btn" type="submit">Salvar compromisso</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

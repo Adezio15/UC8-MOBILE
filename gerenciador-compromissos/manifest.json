@@ -1,0 +1,10 @@
+{
+  "name": "Gerenciador de Compromissos",
+  "short_name": "Compromissos",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#1d4ed8",
+  "description": "Aplicativo local para registrar e acompanhar compromissos com agenda e filtros.",
+  "orientation": "portrait"
+}
